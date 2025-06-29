@@ -84,5 +84,45 @@ def detect_overtrading(df: pd.DataFrame) -> dict:
         "flag" : overtrading_score > 5.0
     }
 
+import pandas as pd
+
 def detect_fomo_behavior(df: pd.DataFrame) -> dict:
-    pass
+    df = df.copy()
+    df = df.sort_values(by="timestamp")
+
+    fomo_count = 0
+    total_count = 0
+
+    for symbol in df["symbol"].dropna().unique():
+        symbol_df = df[df["symbol"] == symbol].copy()
+        symbol_df = symbol_df.sort_values(by="timestamp")
+
+        symbol_df["rolling_avg"] = symbol_df["price"].rolling(window=3, min_periods=1).mean().shift(1)
+
+        symbol_df["price_vs_avg"] = (symbol_df["price"] - symbol_df["rolling_avg"]) / symbol_df["rolling_avg"]
+
+        for idx, row in symbol_df.iterrows():
+            if pd.isna(row["side"]) or pd.isna(row["price_vs_avg"]):
+                continue
+
+            side = row["side"].lower()
+
+            if side == "buy" and row["price_vs_avg"] > 0.002:
+                fomo_count += 1
+
+            elif side == "sell" and row["price_vs_avg"] < -0.002:
+                fomo_count += 1
+            
+            total_count += 1
+
+    
+    fomo_ratio = fomo_count / (total_count + 1e-6)
+    flag = fomo_ratio > 0.3
+
+    return {
+        "fomo_trade_ratio": round(fomo_ratio * 100, 1),
+        "flag": flag
+    }
+
+
+        
