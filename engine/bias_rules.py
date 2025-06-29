@@ -69,7 +69,20 @@ def detect_loss_aversion(df: pd.DataFrame) -> dict:
 
 
 def detect_overtrading(df: pd.DataFrame) -> dict:
-    pass
+    trades_per_day = df.groupby(df['timestamp'].dt.date).size()
+    avg_trades_per_day = trades_per_day.mean()
+    max_trades_per_day = trades_per_day.max()
+    ratio_of_trades_per_day = max_trades_per_day / (avg_trades_per_day + 1e-6)
+
+    df["time diff"] = df["timestamp"].diff().dt.total_seconds().fillna(0) / 60.0
+    avg_time_diff = df["time diff"].mean()
+
+    overtrading_score = round((ratio_of_trades_per_day * 0.6) + ((15 / (avg_time_diff + 1e-6)) * 0.4), 2)
+
+    return {
+        "score" : overtrading_score,
+        "flag" : overtrading_score > 5.0
+    }
 
 def detect_fomo_behavior(df: pd.DataFrame) -> dict:
     pass
