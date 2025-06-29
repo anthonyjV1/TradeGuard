@@ -65,6 +65,8 @@ def detect_loss_aversion(df: pd.DataFrame) -> dict:
         "avg_loss_hold_min": round(avg_loss_hold, 2) if avg_loss_hold else 0,
         "score": round(score, 2) if score is not None else None,
         "flag": flag,
+        "holding_times": [p["holding_time_min"] for p in positions]
+
     }
 
 

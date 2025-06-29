@@ -1,3 +1,4 @@
+"""
 from engine.data_loader import load_csv, clean_trade_data, add_derived_columns
 from engine.bias_rules import detect_overtrading, detect_fomo_behavior, detect_loss_aversion
 
@@ -28,3 +29,9 @@ else:
 
 fomo_result = detect_fomo_behavior(df)
 print(fomo_result)
+"""
+
+from ml.build_dataset import process_trader_logs
+
+df = process_trader_logs()
+print(df.head())
