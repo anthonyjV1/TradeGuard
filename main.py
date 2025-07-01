@@ -32,6 +32,29 @@ print(fomo_result)
 """
 
 from ml.build_dataset import process_trader_logs
+from ml.cluster import run_kmeans
+from ml.pca import apply_pca
+from ml.preprocess import scale_features
 
-df = process_trader_logs()
-print(df.head())
+feature_df = process_trader_logs()
+X_scaled, scaler = scale_features(feature_df)
+X_pca, pca = apply_pca(X_scaled)
+labels, model, silhouette = run_kmeans(X_pca, n_clusters=4)
+feature_df["cluster"] = labels
+
+print(f"✅ Clustering complete! Silhouette score: {silhouette:.2f}")
+print(feature_df[["trader_id", "cluster"]])
+
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8, 6))
+plt.scatter(X_pca.iloc[:, 0], X_pca.iloc[:, 1], c=labels, cmap="viridis", s=100)
+
+
+for i, trader in enumerate(feature_df["trader_id"]):
+    plt.text(X_pca.iloc[i, 0]+0.02, X_pca.iloc[i, 1], trader, fontsize=9)
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.title(f"K-Means Clusters (k=4), Silhouette = {silhouette:.2f}")
+plt.grid(True)
+plt.show()
