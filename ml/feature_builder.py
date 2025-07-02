@@ -1,5 +1,5 @@
 import pandas as pd
-from engine.bias_rules import detect_fomo_behavior, detect_loss_aversion, detect_overtrading
+from tradeguard.bias_rules import detect_fomo_behavior, detect_loss_aversion, detect_overtrading
 
 
 def extract_features_from_log(df: pd.DataFrame) -> dict:
@@ -25,4 +25,5 @@ def extract_features_from_log(df: pd.DataFrame) -> dict:
     flag_count = int(loss_result["flag"]) + int(overtrade_result["flag"]) + int(fomo_result["flag"])
     features["bias_flag_count"] = flag_count
 
+    print("📦 Extracted features:", features)
     return features

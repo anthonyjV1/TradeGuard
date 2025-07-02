@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 from ml.feature_builder import extract_features_from_log
-from engine.data_loader import load_csv, clean_trade_data, add_derived_columns
+from tradeguard.data_loader import load_csv, clean_trade_data, add_derived_columns
 
 def process_trader_logs(log_folder="data/traders/"):
     rows = []
