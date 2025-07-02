@@ -3,9 +3,8 @@ import pandas as pd
 import joblib
 from tradeguard.data_loader import load_csv, clean_trade_data, add_derived_columns
 from tradeguard.bias_rules import detect_loss_aversion, detect_overtrading, detect_fomo_behavior
-from ml.preprocess import scale_features
 from ml.feature_builder import extract_features_from_log
-from ml.pca import apply_pca
+
 
 def analyze_trades(file_path: str):
     
